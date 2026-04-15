@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}About - VV-GPT Research Platform{% endblock %}
+{% block title %}Deep Dive - VV-GPT Architecture{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -14,22 +14,6 @@
         overflow: hidden;
     }
     
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.05'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        animation: float 20s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateX(0px) translateY(0px); }
-        50% { transform: translateX(30px) translateY(-30px); }
-    }
-    
     .hero-title {
         font-size: 3.5rem;
         font-weight: 700;
@@ -38,794 +22,180 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 20px;
-        position: relative;
-        z-index: 2;
     }
     
     .hero-subtitle {
         font-size: 1.3rem;
         color: var(--text-secondary);
-        margin-bottom: 30px;
-        position: relative;
-        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto 30px;
+        line-height: 1.6;
     }
-    
-    .tech-badge {
-        display: inline-block;
-        background: rgba(99, 102, 241, 0.1);
+
+    .section-title {
         color: var(--purple-primary);
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
+        margin-top: 40px;
+        margin-bottom: 20px;
         font-weight: 600;
-        margin: 4px;
-        border: 1px solid var(--purple-primary);
-        transition: all 0.3s ease;
+        border-bottom: 2px solid var(--bg-tertiary);
+        padding-bottom: 10px;
     }
-    
-    .tech-badge:hover {
-        background: var(--purple-primary);
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .architecture-diagram {
+
+    .math-block {
         background: var(--bg-secondary);
-        border: 2px solid var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 30px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .layer-box {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-        border: 2px solid var(--purple-primary);
-        border-radius: 8px;
-        padding: 15px;
-        margin: 10px 0;
-        position: relative;
-        transition: all 0.3s ease;
-    }
-    
-    .layer-box:hover {
-        transform: scale(1.02);
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
-    }
-    
-    .code-example {
-        background: var(--bg-secondary);
-        border: 1px solid var(--purple-primary);
-        border-radius: 8px;
         padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid var(--cyan-primary);
         font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
-        line-height: 1.5;
-        position: relative;
-        margin: 20px 0;
-        color: var(--text-primary);
-    }
-    
-    .code-example::before {
-        content: "Python";
-        position: absolute;
-        top: -10px;
-        left: 20px;
-        background: var(--purple-primary);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin: 30px 0;
-    }
-    
-    .feature-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 25px;
-        text-align: center;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .feature-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: var(--gradient-purple);
-        transition: all 0.3s ease;
-    }
-    
-    .feature-card:hover::before {
-        left: 0;
-    }
-    
-    .feature-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--purple-primary);
-    }
-    
-    .feature-icon {
-        font-size: 2.5rem;
-        color: var(--purple-primary);
-        margin-bottom: 15px;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin: 30px 0;
-    }
-    
-    .stat-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    
-    .stat-card:hover {
-        border-color: var(--cyan-primary);
-        transform: scale(1.05);
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--cyan-primary);
-        font-family: 'JetBrains Mono', monospace;
-    }
-    
-    .stat-label {
-        color: var(--text-secondary);
-        font-size: 14px;
-        margin-top: 5px;
-    }
-    
-    .workflow-step {
-        display: flex;
-        align-items: center;
-        margin: 20px 0;
-        padding: 20px;
-        background: var(--bg-secondary);
-        border-radius: 12px;
-        border-left: 4px solid var(--purple-primary);
-        transition: all 0.3s ease;
-    }
-    
-    .workflow-step:hover {
-        background: var(--bg-tertiary);
-        transform: translateX(10px);
-    }
-    
-    .step-number {
-        background: var(--purple-primary);
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin-right: 20px;
-    }
-    
-    .interactive-demo {
-        background: var(--bg-secondary);
-        border: 2px solid var(--purple-primary);
-        border-radius: 12px;
-        padding: 30px;
-        margin: 30px 0;
-        text-align: center;
-    }
-    
-    .demo-button {
-        background: var(--gradient-purple);
-        border: none;
-        color: white;
-        padding: 15px 30px;
-        border-radius: 25px;
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 10px;
-    }
-    
-    .demo-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-    }
-    
-    .demo-output {
-        background: var(--bg-primary);
-        border: 1px solid var(--bg-tertiary);
-        border-radius: 8px;
-        padding: 20px;
-        margin-top: 20px;
-        font-family: 'JetBrains Mono', monospace;
-        text-align: left;
-        min-height: 100px;
         color: var(--green-primary);
+        margin: 15px 0;
+        overflow-x: auto;
     }
-    
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .feature-grid, .stats-grid {
-            grid-template-columns: 1fr;
-        }
+
+    .card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--bg-tertiary);
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
+
+    .card-header {
+        background: rgba(99, 102, 241, 0.05);
+        border-bottom: 1px solid var(--bg-tertiary);
+        padding: 20px;
+    }
+
+    .file-tree {
+        font-family: 'JetBrains Mono', monospace;
+        background: var(--bg-primary);
+        padding: 20px;
+        border-radius: 8px;
+        color: var(--text-secondary);
+    }
+    .file-tree span.folder { color: var(--purple-primary); font-weight: bold; }
+    .file-tree span.file { color: var(--text-primary); }
+    .file-tree span.desc { color: var(--text-muted); font-size: 0.9em; margin-left: 10px; }
+
 </style>
+
+<!-- Load MathJax for LaTeX mathematical rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <div class="hero-section">
-    <h1 class="hero-title">🧠 VV-GPT</h1>
-    <p class="hero-subtitle">Educational Transformer Language Model Training Platform</p>
-    <div class="mb-4">
-        <span class="tech-badge">PyTorch</span>
-        <span class="tech-badge">Transformers</span>
-        <span class="tech-badge">Flask</span>
-        <span class="tech-badge">Character-Level</span>
-        <span class="tech-badge">Real-time Training</span>
-        <span class="tech-badge">WebSockets</span>
-    </div>
+    <h1 class="hero-title">🧠 VV-GPT Theory & Architecture</h1>
+    <p class="hero-subtitle">An extensive educational breakdown of the mathematics, theory, and precise codebase mechanics that drive the VV-GPT language model.</p>
 </div>
 
-<!-- Simple Explanation -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="bi bi-chat-heart-fill"></i> In Simple Terms...</h3>
-            </div>
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <p style="font-size: 1.2rem; color: var(--text-primary); margin-bottom: 20px; line-height: 1.7;">
-                            <strong>Think of this like teaching a computer to write like Shakespeare or chat like your friends.</strong> 
-                            It's a neural network that learns patterns in text, just like how your brain learns to recognize writing styles.
-                        </p>
-                        
-                        <div style="background: var(--bg-tertiary); border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--cyan-primary);">
-                            <h6 style="color: var(--cyan-primary); margin-bottom: 15px;">The Machine Learning Process:</h6>
-                            <div style="color: var(--text-secondary);">
-                                <p><i class="bi bi-upload" style="color: var(--purple-primary); margin-right: 8px;"></i><strong>1. Feed it data</strong> - Upload text (books, chats, articles) that becomes the "training data"</p>
-                                <p><i class="bi bi-gear-fill" style="color: var(--purple-primary); margin-right: 8px;"></i><strong>2. Train the neural network</strong> - The AI reads through your text thousands of times, learning which characters and words typically come after others</p>
-                                <p><i class="bi bi-graph-up" style="color: var(--purple-primary); margin-right: 8px;"></i><strong>3. Optimize & improve</strong> - The model gets better by adjusting millions of "weights" (like synapses in a brain) to minimize prediction errors</p>
-                                <p><i class="bi bi-chat-dots" style="color: var(--purple-primary); margin-right: 8px;"></i><strong>4. Generate new text</strong> - You give it a prompt, and it predicts the most likely next characters based on what it learned</p>
-                                <p style="margin: 0;"><i class="bi bi-stars" style="color: var(--purple-primary); margin-right: 8px;"></i><strong>5. Get results</strong> - It creates new text that statistically resembles your training data's style and patterns</p>
-                            </div>
-                        </div>
-                        
-                        <div style="background: var(--bg-primary); border-radius: 8px; padding: 15px; margin-bottom: 20px; border: 1px solid var(--bg-tertiary);">
-                            <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">
-                                <i class="bi bi-lightbulb" style="color: var(--cyan-primary); margin-right: 8px;"></i>
-                                <strong>The key insight:</strong> Instead of programming rules for how to write, we let the computer discover the patterns by showing it lots of examples. 
-                                It's like learning a language by reading lots of books rather than memorizing grammar rules.
-                            </p>
-                        </div>
-                        
-                        <p style="color: var(--text-secondary); font-style: italic;">
-                            "It's like having a personal AI that learned to write by reading your favorite authors and mimicking their style!"
-                        </p>
-                    </div>
-                    
-                    <div class="col-md-4 text-center">
-                        <div style="margin-bottom: 25px; padding: 20px; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--bg-tertiary);">
-                            <h6 style="color: var(--text-primary); margin-bottom: 15px;">The Learning Process:</h6>
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px;">
-                                <div style="text-align: center;">
-                                    <i class="bi bi-brain" style="font-size: 2.2rem; color: var(--purple-primary); display: block;"></i>
-                                    <small style="color: var(--text-muted); font-size: 11px;">Human Brain</small>
-                                </div>
-                                <i class="bi bi-arrow-right" style="font-size: 1.2rem; color: var(--cyan-primary);"></i>
-                                <div style="text-align: center;">
-                                    <i class="bi bi-laptop" style="font-size: 2.2rem; color: var(--green-primary); display: block;"></i>
-                                    <small style="color: var(--text-muted); font-size: 11px;">Neural Network</small>
-                                </div>
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">
-                                Pattern recognition transferred to artificial neurons
-                            </p>
-                        </div>
-                        
-                        <h6 style="color: var(--text-primary); margin-bottom: 15px;">Training Examples:</h6>
-                        <div style="font-size: 14px; color: var(--text-secondary);">
-                            <p><i class="bi bi-book" style="color: var(--purple-primary); margin-right: 5px;"></i><strong>Shakespeare:</strong><br>"Thou art most beauteous"</p>
-                            <p><i class="bi bi-whatsapp" style="color: var(--green-primary); margin-right: 5px;"></i><strong>WhatsApp:</strong><br>"lol that's so funny 😂"</p>
-                            <p><i class="bi bi-newspaper" style="color: var(--cyan-primary); margin-right: 5px;"></i><strong>News:</strong><br>"According to recent reports..."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- 1. THE THEORY -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="bi bi-book"></i> 1. The Theory: What is a Transformer?</h3>
     </div>
-</div>
-
-<!-- Project Overview -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="bi bi-lightbulb-fill"></i> What Is This Project?</h3>
-            </div>
-            <div class="card-body">
-                <p style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 25px;">
-                    <strong>VV-GPT</strong> is an educational platform that demonstrates how modern AI language models work under the hood. 
-                    Built from scratch using PyTorch, it implements a character-level transformer architecture similar to GPT, 
-                    complete with a beautiful web interface for training, chatting, and model management.
-                </p>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5 style="color: var(--purple-primary);">🎯 Purpose</h5>
-                        <ul style="color: var(--text-secondary);">
-                            <li>Learn how transformers and attention mechanisms work</li>
-                            <li>Understand neural language model training</li>
-                            <li>Experience the full ML workflow from data to deployment</li>
-                            <li>Experiment with different architectures and hyperparameters</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 style="color: var(--cyan-primary);">✨ Key Features</h5>
-                        <ul style="color: var(--text-secondary);">
-                            <li>Train models on any text data (books, chats, documents)</li>
-                            <li>Real-time training progress with WebSocket updates</li>
-                            <li>Interactive chat interface with your trained models</li>
-                            <li>Model management and performance analytics</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- System Statistics -->
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-number">{{ system_info.models_count }}</div>
-        <div class="stat-label">Trained Models</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ "%.1f"|format(system_info.project_size) }}MB</div>
-        <div class="stat-label">Project Size</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ system_info.python_version }}</div>
-        <div class="stat-label">Python Version</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{% if system_info.cuda_available %}GPU{% else %}CPU{% endif %}</div>
-        <div class="stat-label">Training Device</div>
-    </div>
-</div>
-
-<!-- Architecture Deep Dive -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="bi bi-diagram-3-fill"></i> Neural Network Architecture</h3>
-            </div>
-            <div class="card-body">
-                <p style="color: var(--text-secondary); margin-bottom: 30px;">
-                    Our implementation follows the transformer architecture from "Attention Is All You Need" (Vaswani et al., 2017) with modern improvements:
-                </p>
-                
-                <div class="architecture-diagram">
-                    <h5 style="color: var(--purple-primary); margin-bottom: 25px;">🏗️ Layer Stack</h5>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">Language Model Head</strong>
-                        <br><small style="color: var(--text-muted);">Linear(n_embd → vocab_size) • Converts embeddings to token probabilities</small>
-                    </div>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">Layer Normalization</strong>
-                        <br><small style="color: var(--text-muted);">Final normalization before output</small>
-                    </div>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">N × Transformer Blocks</strong>
-                        <br><small style="color: var(--text-muted);">Multi-head Attention + Feed-forward Network + Residual Connections</small>
-                    </div>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">Dropout Layer</strong>
-                        <br><small style="color: var(--text-muted);">Regularization to prevent overfitting</small>
-                    </div>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">Positional Embeddings</strong>
-                        <br><small style="color: var(--text-muted);">Learned position encoding (0 to block_size)</small>
-                    </div>
-                    
-                    <div class="layer-box">
-                        <strong style="color: var(--text-primary);">Token Embeddings</strong>
-                        <br><small style="color: var(--text-muted);">Character-level embedding lookup table</small>
-                    </div>
-                </div>
-                
-                <div class="code-example">
-<pre style="margin: 0; color: var(--text-primary); background: transparent;"># Core transformer block implementation
-class Block(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
-        self.attn = CausalSelfAttention(config)  # Multi-head attention
-        self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
-        self.mlp = MLP(config)  # Feed-forward network
+    <div class="card-body">
+        <p>Since the groundbreaking 2017 paper <em>"Attention Is All You Need"</em> by Vaswani et al., the Natural Language Processing world shifted away from Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTMs) towards the <strong>Transformer</strong> sequence-to-sequence architecture.</p>
         
-    def forward(self, x):
-        # Pre-normalization (more stable than post-norm)
-        x = x + self.attn(self.ln_1(x))  # Attention + residual
-        x = x + self.mlp(self.ln_2(x))   # MLP + residual
-        return x</pre>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Key Components -->
-<div class="row mb-5">
-    <div class="col-12">
-        <h2 class="text-center mb-4" style="color: var(--text-primary);">🔧 System Components</h2>
-    </div>
-</div>
-
-<div class="feature-grid">
-    <div class="feature-card">
-        <i class="bi bi-brain feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Enhanced GPT Model</h4>
-        <p style="color: var(--text-secondary);">
-            Modern transformer implementation with multi-head attention, pre-normalization, 
-            GELU activation, and configurable architecture (nano to large sizes).
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">src/models/enhanced_gpt.py</code>
-        </div>
-    </div>
-    
-    <div class="feature-card">
-        <i class="bi bi-database-fill feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Smart Data Processing</h4>
-        <p style="color: var(--text-secondary);">
-            Automatic format detection for plain text and WhatsApp conversations, 
-            with intelligent preprocessing and character-level tokenization.
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">src/training/data_loader.py</code>
-        </div>
-    </div>
-    
-    <div class="feature-card">
-        <i class="bi bi-lightning-fill feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Real-time Training</h4>
-        <p style="color: var(--text-secondary);">
-            WebSocket-powered live training updates, progress tracking, loss monitoring, 
-            and automatic model checkpointing during training.
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">src/training/train.py</code>
-        </div>
-    </div>
-    
-    <div class="feature-card">
-        <i class="bi bi-chat-dots-fill feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Interactive Chat</h4>
-        <p style="color: var(--text-secondary);">
-            Advanced text generation with temperature control, top-k and nucleus sampling, 
-            plus backward compatibility for loading older models.
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">src/chat/chat.py</code>
-        </div>
-    </div>
-    
-    <div class="feature-card">
-        <i class="bi bi-globe feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Modern Web Interface</h4>
-        <p style="color: var(--text-secondary);">
-            Flask-based web application with dark theme, responsive design, 
-            real-time updates, and professional UI components.
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">web_app.py + templates/</code>
-        </div>
-    </div>
-    
-    <div class="feature-card">
-        <i class="bi bi-folder-fill feature-icon"></i>
-        <h4 style="color: var(--text-primary);">Clean Architecture</h4>
-        <p style="color: var(--text-secondary);">
-            Organized project structure with proper imports, backward compatibility, 
-            and modular design for easy extension and maintenance.
-        </p>
-        <div style="margin-top: 15px;">
-            <code style="font-size: 12px;">src/ structure</code>
-        </div>
-    </div>
-</div>
-
-<!-- How It Works -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="bi bi-gear-fill"></i> How The Training Process Works</h3>
-            </div>
-            <div class="card-body">
-                <div class="workflow-step">
-                    <div class="step-number">1</div>
-                    <div>
-                        <h6 style="color: var(--text-primary);">Data Upload & Processing</h6>
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            Upload text files → Auto-detect format (plain text/WhatsApp) → Clean and preprocess → 
-                            Build character-level vocabulary → Split into train/validation sets
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="workflow-step">
-                    <div class="step-number">2</div>
-                    <div>
-                        <h6 style="color: var(--text-primary);">Model Configuration</h6>
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            Choose model size (nano to large) → Set hyperparameters → Initialize transformer architecture → 
-                            Configure AdamW optimizer with weight decay
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="workflow-step">
-                    <div class="step-number">3</div>
-                    <div>
-                        <h6 style="color: var(--text-primary);">Training Loop</h6>
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            Forward pass → Calculate loss → Backward pass → Gradient clipping → 
-                            Update weights → Learning rate scheduling → Periodic evaluation → Save best models
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="workflow-step">
-                    <div class="step-number">4</div>
-                    <div>
-                        <h6 style="color: var(--text-primary);">Real-time Monitoring</h6>
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            WebSocket updates → Live progress tracking → Loss visualization → 
-                            Training logs → Automatic completion notification
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="workflow-step">
-                    <div class="step-number">5</div>
-                    <div>
-                        <h6 style="color: var(--text-primary);">Model Usage</h6>
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            Load trained model → Interactive chat interface → Adjust generation parameters → 
-                            Generate text with temperature/top-k/nucleus sampling
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Interactive Demo -->
-<div class="interactive-demo">
-    <h3 style="color: var(--purple-primary); margin-bottom: 20px;">🎮 Interactive Architecture Explorer</h3>
-    <p style="color: var(--text-secondary); margin-bottom: 25px;">
-        Click the buttons below to explore different aspects of the transformer architecture:
-    </p>
-    
-    <div>
-        <button class="demo-button" onclick="showArchitectureInfo('attention')">
-            🔍 Multi-Head Attention
-        </button>
-        <button class="demo-button" onclick="showArchitectureInfo('feedforward')">
-            🔧 Feed-Forward Network
-        </button>
-        <button class="demo-button" onclick="showArchitectureInfo('embeddings')">
-            📊 Embeddings
-        </button>
-        <button class="demo-button" onclick="showArchitectureInfo('training')">
-            🚀 Training Process
-        </button>
-    </div>
-    
-    <div class="demo-output" id="architectureOutput">
-        <div style="color: var(--text-muted); text-align: center; padding: 20px;">
-            👆 Click a button above to explore the architecture components
-        </div>
-    </div>
-</div>
-
-<!-- Technical Specifications -->
-<div class="row mb-5">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-cpu-fill"></i> Model Specifications</h5>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Nano Model:</strong></div>
-                    <div class="col-6" style="color: var(--cyan-primary);">0.8M parameters</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Tiny Model:</strong></div>
-                    <div class="col-6" style="color: var(--cyan-primary);">10M parameters</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Large Model:</strong></div>
-                    <div class="col-6" style="color: var(--cyan-primary);">150M parameters</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Context Length:</strong></div>
-                    <div class="col-6" style="color: var(--green-primary);">128-512 tokens</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Vocabulary:</strong></div>
-                    <div class="col-6" style="color: var(--green-primary);">Character-level</div>
-                </div>
-                <div class="row">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Attention Heads:</strong></div>
-                    <div class="col-6" style="color: var(--purple-primary);">3-16 heads</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-tools"></i> Technical Stack</h5>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Deep Learning:</strong></div>
-                    <div class="col-6" style="color: var(--cyan-primary);">PyTorch {{ system_info.pytorch_version }}</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Web Framework:</strong></div>
-                    <div class="col-6" style="color: var(--cyan-primary);">Flask + SocketIO</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Frontend:</strong></div>
-                    <div class="col-6" style="color: var(--green-primary);">Bootstrap 5 + JS</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Optimizer:</strong></div>
-                    <div class="col-6" style="color: var(--green-primary);">AdamW + Scheduling</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Activation:</strong></div>
-                    <div class="col-6" style="color: var(--purple-primary);">GELU</div>
-                </div>
-                <div class="row">
-                    <div class="col-6" style="color: var(--text-primary);"><strong>Normalization:</strong></div>
-                    <div class="col-6" style="color: var(--purple-primary);">LayerNorm</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-function showArchitectureInfo(component) {
-    const output = document.getElementById('architectureOutput');
-    
-    const info = {
-        attention: `
-<div style="color: var(--green-primary); font-weight: bold; margin-bottom: 10px;">🔍 Multi-Head Attention Mechanism</div>
-<div style="color: var(--text-primary);">
-• <strong>Purpose:</strong> Allows model to focus on different parts of input sequence simultaneously<br>
-• <strong>Query, Key, Value:</strong> Three learned linear projections of input<br>
-• <strong>Scaled Dot-Product:</strong> Attention(Q,K,V) = softmax(QK^T/√d_k)V<br>
-• <strong>Multi-Head:</strong> Run attention multiple times in parallel with different learned projections<br>
-• <strong>Causal Masking:</strong> Prevents model from looking at future tokens during training<br><br>
-
-<strong style="color: var(--purple-primary);">Code Implementation:</strong><br>
-<span style="color: var(--cyan-primary);">att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))</span><br>
-<span style="color: var(--cyan-primary);">att = F.softmax(att, dim=-1)</span><br>
-<span style="color: var(--cyan-primary);">y = att @ v  # Weighted combination of values</span>
-</div>`,
+        <p>VV-GPT is based strictly on the Decoder-only subset of the original Transformer architecture. This is identical to the underlying architecture of OpenAI's GPT-1, GPT-2, and GPT-3.</p>
         
-        feedforward: `
-<div style="color: var(--green-primary); font-weight: bold; margin-bottom: 10px;">🔧 Feed-Forward Network (MLP)</div>
-<div style="color: var(--text-primary);">
-• <strong>Architecture:</strong> Linear → GELU → Linear → Dropout<br>
-• <strong>Expansion:</strong> Hidden size is 4x the embedding dimension<br>
-• <strong>GELU Activation:</strong> More natural than ReLU: x * Φ(x)<br>
-• <strong>Purpose:</strong> Non-linear transformation after attention<br>
-• <strong>Residual Connection:</strong> x = x + MLP(LayerNorm(x))<br><br>
+        <h5>Core Theoretical Concepts:</h5>
+        <ul>
+            <li><strong>Auto-Regressive Generation:</strong> The model generates text one token at a time. It uses the previously predicted token as part of the context to predict the next token. This is repeated to generate full paragraphs.</li>
+            <li><strong>Character-Level Tokenization:</strong> While modern LLMs use Subword (BPE) tokenization, this version of VV-GPT uses character-level tokens to remain highly educational. Every alphabetical letter, space, and emoji is mapped to a unique integer ID.</li>
+            <li><strong>The "Context Window":</strong> Neural networks cannot process text directly. Text is converted to numbers. The sequence of numbers is restricted to a absolute length (in our case, `block_size` usually 256 or 512). The neural network analyzes the previous 256 characters collectively to guess the 257th.</li>
+        </ul>
+    </div>
+</div>
 
-<strong style="color: var(--purple-primary);">Code Implementation:</strong><br>
-<span style="color: var(--cyan-primary);">x = self.c_fc(x)    # Linear: embd → 4*embd</span><br>
-<span style="color: var(--cyan-primary);">x = self.gelu(x)    # GELU activation</span><br>
-<span style="color: var(--cyan-primary);">x = self.c_proj(x)  # Linear: 4*embd → embd</span><br>
-<span style="color: var(--cyan-primary);">x = self.dropout(x) # Regularization</span>
-</div>`,
+<!-- 2. THE MATHS -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="bi bi-calculator"></i> 2. The Mathematics of Attention</h3>
+    </div>
+    <div class="card-body">
+        <p>The beating heart of VV-GPT is the <strong>Self-Attention Mechanism</strong>. Rather than reading a sentence left-to-right, Attention allows every character in the sequence to look at every other character in the sequence mathematically simultaneously to determine context.</p>
+
+        <h5 class="mt-4">The Query, Key, and Value (QKV)</h5>
+        <p>For every token embedding vector \( x_i \), we project it through three separate linear transformation matrices to create three new vectors:</p>
+        <ul>
+            <li><strong>Query (\( Q \)):</strong> "What information am I looking for?"</li>
+            <li><strong>Key (\( K \)):</strong> "What information do I contain?"</li>
+            <li><strong>Value (\( V \)):</strong> "If you find my key relevant, here is the actual content you should extract."</li>
+        </ul>
+
+        <h5 class="mt-4">Scaled Dot-Product Attention</h5>
+        <p>We calculate the "affinity" or "attention score" between token \(A\) and token \(B\) by taking the dot product of \(A\)'s Query and \(B\)'s Key. The higher the dot product, the more they relate. We scale this down by the square root of the embedding dimension (\( \sqrt{d_k} \)) to keep gradients stable, and apply a <strong>Softmax</strong> function to turn the scores into probabilities (0 to 1) that sum to 1. Finally, we multiply these probabilities by the Values (\( V \)).</p>
         
-        embeddings: `
-<div style="color: var(--green-primary); font-weight: bold; margin-bottom: 10px;">📊 Token & Positional Embeddings</div>
-<div style="color: var(--text-primary);">
-• <strong>Token Embeddings:</strong> Convert character indices to dense vectors<br>
-• <strong>Positional Embeddings:</strong> Add position information to tokens<br>
-• <strong>Character-Level:</strong> Each character gets its own embedding<br>
-• <strong>Learned Positions:</strong> Positions 0 to block_size each have learned embeddings<br>
-• <strong>Addition:</strong> tok_emb + pos_emb = final input to transformer<br><br>
+        <div class="math-block">
+            \[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]
+        </div>
 
-<strong style="color: var(--purple-primary);">Code Implementation:</strong><br>
-<span style="color: var(--cyan-primary);">tok_emb = self.wte(idx)  # Token embeddings</span><br>
-<span style="color: var(--cyan-primary);">pos_emb = self.wpe(pos)  # Position embeddings</span><br>
-<span style="color: var(--cyan-primary);">x = tok_emb + pos_emb    # Combine both</span><br>
-<span style="color: var(--cyan-primary);">x = self.drop(x)         # Apply dropout</span>
-</div>`,
+        <h5 class="mt-4">Causal Masking</h5>
+        <p>Because VV-GPT is a generative model, it is strictly forbidden from "looking into the future" during training. If we are trying to predict the 5th character, the 5th character's Query can only calculate dot products with Keys from positions 1, 2, 3, and 4. We enforce this mathematically using a lower-triangular matrix filled with \(-\infty\) (negative infinity) above the diagonal. When the Softmax is applied, \(-\infty\) becomes 0.</p>
         
-        training: `
-<div style="color: var(--green-primary); font-weight: bold; margin-bottom: 10px;">🚀 Training Process</div>
-<div style="color: var(--text-primary);">
-• <strong>Data Processing:</strong> Character-level tokenization → batching<br>
-• <strong>Forward Pass:</strong> Input through transformer → calculate loss<br>
-• <strong>Backward Pass:</strong> Gradients via backpropagation<br>
-• <strong>Optimization:</strong> AdamW with weight decay and learning rate scheduling<br>
-• <strong>Evaluation:</strong> Regular validation loss computation<br>
-• <strong>Checkpointing:</strong> Save best models automatically<br><br>
+        <div class="math-block">
+            \[ \text{Mask}(i, j) = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases} \]
+        </div>
+        
+        <h5 class="mt-4">Pre-Layer Normalization</h5>
+        <p>Unlike the original 2017 Transformer which Normalized after the residual connection (Post-Norm), VV-GPT uses the GPT-2 innovation of <strong>Pre-Norm</strong>. We apply Layer Normalization before the Attention and before the Feed-Forward Network. This makes deep networks massively more mathematically stable during backpropagation.</p>
+        <div class="math-block">
+            \[ x_{out} = x + \text{Attention}(\text{LayerNorm}(x)) \]
+            \[ x_{final} = x_{out} + \text{MLP}(\text{LayerNorm}(x_{out})) \]
+        </div>
+    </div>
+</div>
 
-<strong style="color: var(--purple-primary);">Training Loop:</strong><br>
-<span style="color: var(--cyan-primary);">logits, loss = model(X, Y)  # Forward pass</span><br>
-<span style="color: var(--cyan-primary);">loss.backward()             # Compute gradients</span><br>
-<span style="color: var(--cyan-primary);">optimizer.step()            # Update weights</span><br>
-<span style="color: var(--cyan-primary);">scheduler.step()            # Update learning rate</span>
-</div>`
-    };
-    
-    output.innerHTML = info[component] || '<div style="color: var(--text-muted);">Component information not found.</div>';
-    
-    // Add animation
-    output.style.opacity = '0';
-    setTimeout(() => {
-        output.style.opacity = '1';
-        output.style.transition = 'opacity 0.3s ease';
-    }, 100);
-}
+<!-- 3. HOW IT IS TRAINED -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="bi bi-activity"></i> 3. The Training Loop</h3>
+    </div>
+    <div class="card-body">
+        <p>Training the model is the process of altering the weights of the network (the matrices that create Q, K, V, and the MLP layers) so that the network minimizes errors in its predictions.</p>
 
-// Auto-show attention info on load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        showArchitectureInfo('attention');
-    }, 1000);
-});
-</script>
+        <ol>
+            <li><strong>Batching:</strong> We pull a random chunk of text (e.g. 64 sequences, each 256 characters long).</li>
+            <li><strong>Forward Pass:</strong> The network guesses the very next character for every single position in that 256-length window across all 64 sequences.</li>
+            <li><strong>Cross-Entropy Loss:</strong> We measure how wrong the network was. It output a probability distribution over the ~60 character vocabulary. Did it assign 99% to 'e' when the answer was actually 'e'? Good. Did it assign 1% to 'e'? Bad (High Loss).</li>
+            <li><strong>Backpropagation:</strong> We use PyTorch's Autograd engine to calculate the <em>gradient</em> of the loss with respect to every single parameter in the model. This tells us which direction to nudge the weights.</li>
+            <li><strong>AdamW Optimizer & Weight Decay:</strong> We use the AdamW algorithm to update the weights. Weight decay actively shrinks parameters towards zero, ensuring the network doesn't rely entirely on a few massive weights to memorize the text (overfitting).</li>
+            <li><strong>Cosine Learning Rate Decay:</strong> We start with a high learning rate to learn general patterns quickly, then smoothly cosine-decay the rate down to fine-tune the final details.</li>
+        </ol>
+    </div>
+</div>
+
+<!-- 4. FILE STRUCTURE -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="bi bi-folder2-open"></i> 4. Project File Structure</h3>
+    </div>
+    <div class="card-body">
+        <div class="file-tree">
+            <div><span class="folder">vv-gpt-mac/</span></div>
+            
+            <div class="ms-4 mt-2"><span class="folder">src/</span></div>
+            
+            <div class="ms-5 mt-1"><span class="folder">models/</span></div>
+            <div class="ms-5 mt-1 ps-4"><span class="file">enhanced_gpt.py</span> <span class="desc"># The CORE neural network PyTorch architecture. Contains the `CausalSelfAttention`, `Block`, and `GPT` classes. This is the brain!</span></div>
+            
+            <div class="ms-5 mt-3"><span class="folder">training/</span></div>
+            <div class="ms-5 mt-1 ps-4"><span class="file">data_loader.py</span> <span class="desc"># Parses your plain text or WhatsApp txt files. Converts characters to unique integers using `stoi` and `itos` maps.</span></div>
+            <div class="ms-5 mt-1 ps-4"><span class="file">train.py</span> <span class="desc"># Command-Line script. Sets up the Model + AdamW optimizer + Loss loops + learning rate schedulers to train .pt checkpoints.</span></div>
+            
+            <div class="ms-5 mt-3"><span class="folder">chat/</span></div>
+            <div class="ms-5 mt-1 ps-4"><span class="file">chat.py</span> <span class="desc"># The inference engine. Loads a `.pt` checkpoint and runs the `model.generate()` loop to spit out new text interactively.</span></div>
+            
+            <div class="ms-4 mt-3"><span class="folder">templates/</span></div>
+            <div class="ms-4 mt-1 ps-4"><span class="file">*.html</span> <span class="desc"># The frontend user interface templates using Bootstrap & Jinja2 (including this page!).</span></div>
+            
+            <div class="ms-4 mt-3"><span class="file">web_app.py</span> <span class="desc"># The Flask & WebSockets server. Links the frontend HTML with the PyTorch backend, streaming real-time loss graphs.</span></div>
+            <div class="ms-4 mt-1"><span class="file">desktop_launcher.py</span> <span class="desc"># A wrapper that initiates the Flask server automatically and bounds it to your computer locally.</span></div>
+            <div class="ms-4 mt-1"><span class="file">create_mac_app.sh</span> <span class="desc"># The script that packages the ecosystem into the `VV-GPT.app` on your desktop.</span></div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
