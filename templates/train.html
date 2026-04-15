@@ -1,0 +1,798 @@
+{% extends "base.html" %}
+
+{% block title %}Neural Network Training - Homemade GPT{% endblock %}
+
+{% block extra_head %}
+<style>
+    .upload-zone {
+        border: 2px dashed var(--purple-primary);
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        background: rgba(99, 102, 241, 0.05);
+        transition: all 0.3s ease;
+        color: var(--text-primary);
+    }
+    
+    .upload-zone.dragover {
+        border-color: var(--green-primary);
+        background: rgba(16, 185, 129, 0.1);
+        transform: scale(1.01);
+    }
+    
+    .file-info {
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid var(--green-primary);
+    }
+    
+    .training-progress {
+        display: none;
+    }
+    
+    .training-progress.active {
+        display: block;
+    }
+    
+    .training-logs {
+        background: var(--bg-primary);
+        color: var(--green-primary);
+        border: 1px solid var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 20px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        font-size: 13px;
+        height: 300px;
+        overflow-y: auto;
+        line-height: 1.4;
+    }
+    
+    /* Dark theme accordion styling */
+    .accordion-item {
+        background: var(--bg-secondary);
+        border: 1px solid var(--bg-tertiary);
+    }
+    
+    .accordion-button {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .accordion-button:hover {
+        background: var(--bg-tertiary);
+        color: var(--purple-primary);
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        box-shadow: none;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        border-color: var(--purple-primary);
+    }
+    
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236366f1'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+    
+    .accordion-body {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="bi bi-cpu feature-icon d-block"></i>
+            Neural Network Training
+        </h1>
+        <p class="text-center mb-5" style="color: var(--text-secondary);">
+            Configure and train transformer models on custom text data. Monitor training progress in real-time.
+        </p>
+    </div>
+</div>
+
+<!-- Upload Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-cloud-upload"></i> Step 1: Upload Training Data
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="upload-zone" id="uploadZone">
+                    <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: var(--purple-primary); margin-bottom: 20px;"></i>
+                    <h5 style="color: var(--text-primary);">Upload Training Data</h5>
+                    <p style="color: var(--text-secondary);" class="mb-3">
+                        Drop text files here or click to browse. Supports .txt files up to 16MB.
+                    </p>
+                    <button type="button" class="btn btn-gradient" onclick="document.getElementById('fileInput').click()">
+                        <i class="bi bi-upload"></i> Select File
+                    </button>
+                    <input type="file" id="fileInput" accept=".txt" style="display: none;">
+                </div>
+                
+                <!-- File Info -->
+                <div id="fileInfo" class="file-info mt-3" style="display: none;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="mb-1" id="fileName">📄 File Name</h6>
+                            <p class="mb-0 text-muted" id="fileDetails">Size: 0 KB | Format: Unknown</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-outline-danger" onclick="clearFile()">
+                                <i class="bi bi-x-circle"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuration Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-sliders"></i> Step 2: Configure Training
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="trainingForm">
+                    <div class="row">
+                        <!-- Model Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="modelName" class="form-label">Model Name</label>
+                            <input type="text" class="form-control" id="modelName" 
+                                   placeholder="my-awesome-model" required>
+                            <div class="form-text">Give your model a unique name</div>
+                        </div>
+                        
+                        <!-- Model Size -->
+                        <div class="col-md-6 mb-3">
+                            <label for="modelSize" class="form-label">Model Size</label>
+                            <select class="form-select" id="modelSize" required>
+                                <option value="nano">Nano (0.8M params) - Quick experiments</option>
+                                <option value="micro">Micro (1.5M params) - Small datasets</option>
+                                <option value="tiny" selected>Tiny (10M params) - Recommended</option>
+                                <option value="small">Small (25M params) - Better quality</option>
+                                <option value="medium">Medium (70M params) - High quality</option>
+                                <option value="large">Large (150M params) - Best quality (slow)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Training Iterations -->
+                        <div class="col-md-4 mb-3">
+                            <label for="maxIters" class="form-label">Training Iterations</label>
+                            <input type="number" class="form-control" id="maxIters" 
+                                   value="2000" min="100" max="20000" required>
+                            <div class="form-text">More iterations = better quality (slower)</div>
+                        </div>
+                        
+                        <!-- Eval/Progress Interval -->
+                        <div class="col-md-4 mb-3">
+                            <label for="progressInterval" class="form-label">Progress/Eval Interval</label>
+                            <select class="form-select" id="progressInterval">
+                                <option value="25">25 steps</option>
+                                <option value="50" selected>50 steps</option>
+                                <option value="100">100 steps</option>
+                            </select>
+                            <div class="form-text">How often to evaluate and save checkpoints</div>
+                        </div>
+                        
+                        <!-- Resume from latest -->
+                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="resumeLatest">
+                                <label class="form-check-label" for="resumeLatest">
+                                    Resume from latest checkpoint
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Learning Rate -->
+                        <div class="col-md-6 mb-3">
+                            <label for="learningRate" class="form-label">Learning Rate</label>
+                            <select class="form-select" id="learningRate">
+                                <option value="0.0001">0.0001 - Conservative</option>
+                                <option value="0.0003" selected>0.0003 - Recommended</option>
+                                <option value="0.001">0.001 - Aggressive</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Settings (Collapsible) -->
+                    <div class="accordion mt-3">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSettings">
+                                    <i class="bi bi-gear-fill me-2"></i> Advanced Settings
+                                </button>
+                            </h2>
+                            <div id="advancedSettings" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="blockSize" class="form-label">Context Length</label>
+                                            <select class="form-select" id="blockSize">
+                                                <option value="128">128 - Fast training</option>
+                                                <option value="256" selected>256 - Balanced</option>
+                                                <option value="512">512 - Long context</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="batchSize" class="form-label">Batch Size</label>
+                                            <select class="form-select" id="batchSize">
+                                                <option value="16">16 - Low memory</option>
+                                                <option value="32" selected>32 - Balanced</option>
+                                                <option value="64">64 - Fast training</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="dropout" class="form-label">Dropout</label>
+                                            <select class="form-select" id="dropout">
+                                                <option value="0.0">0.0 - No regularization</option>
+                                                <option value="0.1" selected>0.1 - Light regularization</option>
+                                                <option value="0.2">0.2 - Strong regularization</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Training Button -->
+                    <div class="text-center mt-4 d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn btn-gradient btn-lg" id="startTrainingBtn" disabled>
+                            <i class="bi bi-play-fill"></i> Start Training
+                        </button>
+                        <button type="button" class="btn btn-outline-warning btn-lg" id="pauseBtn" disabled>
+                            ⏸️ Pause
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-lg" id="resumeBtn" disabled>
+                            ▶️ Resume
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-lg" id="stopBtn" disabled>
+                            🛑 Stop
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Training Progress Section -->
+<div class="row training-progress" id="trainingProgress">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-activity"></i> Training Progress
+                </h5>
+                <span class="badge bg-success" id="trainingStatus">Training...</span>
+            </div>
+            <div class="card-body">
+                <!-- Progress Bar -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="color: var(--text-primary);">Progress</span>
+                        <span id="progressText" style="color: var(--text-primary);">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Training Stats -->
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="currentIteration" style="color: var(--text-primary);">0</div>
+                            <small style="color: var(--text-muted);">Iteration</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="currentLoss" style="color: var(--text-primary);">—</div>
+                            <small style="color: var(--text-muted);">Current Loss</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="bestLoss" style="color: var(--text-primary);">—</div>
+                            <small style="color: var(--text-muted);">Best Loss</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="learningRateDisplay" style="color: var(--text-primary);">—</div>
+                            <small style="color: var(--text-muted);">Learning Rate</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="elapsedTime" style="color: var(--text-primary);">00:00:00</div>
+                            <small style="color: var(--text-muted);">Elapsed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h4 mb-0" id="etaTime" style="color: var(--text-primary);">—</div>
+                            <small style="color: var(--text-muted);">ETA</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Training Logs -->
+                <div class="training-logs" id="trainingLogs">
+                    <div>🚀 Initializing training...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tips Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> Training Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 style="color: var(--text-primary);">📚 For Books/Novels:</h6>
+                        <ul style="color: var(--text-secondary);">
+                            <li>Use at least 1MB of text (short book)</li>
+                            <li>Recommended: Small or Medium model</li>
+                            <li>Training iterations: 5000-10000</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 style="color: var(--text-primary);">💬 For WhatsApp Chats:</h6>
+                        <ul style="color: var(--text-secondary);">
+                            <li>Export chat without media</li>
+                            <li>Recommended: Tiny or Small model</li>
+                            <li>Training iterations: 2000-5000</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let uploadedFile = null;
+let socket = null;
+
+// Initialize Socket.IO connection
+document.addEventListener('DOMContentLoaded', function() {
+    socket = io();
+    let lastSocketEventMs = Date.now();
+    
+    socket.on('connect', function() {
+        console.log('Connected to server');
+        lastSocketEventMs = Date.now();
+    });
+    
+    socket.on('training_progress', function(data) {
+        try {
+            lastSocketEventMs = Date.now();
+            updateTrainingProgress(data);
+        } catch (e) {
+            console.error('Error updating training progress:', e, data);
+        }
+    });
+
+    socket.on('checkpoint_saved', function(data) {
+        lastSocketEventMs = Date.now();
+        const logs = document.getElementById('trainingLogs');
+        const entry = document.createElement('div');
+        const ts = new Date().toLocaleTimeString();
+        const label = data.type === 'best' ? '💾 Best checkpoint' : '📝 Latest checkpoint';
+        const val = Number.isFinite(data.val_loss) ? data.val_loss.toFixed(4) : '—';
+        entry.innerHTML = `<span style=\"color: #10b981;\">[${ts}]</span> ${label} saved at step <strong>${data.iteration}</strong> (val_loss=${val}) → <code>${data.path}</code>`;
+        logs.appendChild(entry);
+        logs.scrollTop = logs.scrollHeight;
+        while (logs.children.length > 200) logs.removeChild(logs.firstChild);
+    });
+    
+    socket.on('training_complete', function(data) {
+        lastSocketEventMs = Date.now();
+        onTrainingComplete(data);
+    });
+    
+    socket.on('training_error', function(data) {
+        lastSocketEventMs = Date.now();
+        onTrainingError(data);
+    });
+    
+    socket.on('training_log', function(data) {
+        lastSocketEventMs = Date.now();
+        addTrainingLogMessage(data.message);
+    });
+
+    // Start polling fallback with backoff (poll only if no socket events for 10s)
+    startStatusPolling(() => Date.now() - lastSocketEventMs > 10000, 10000);
+});
+
+// File upload handling
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+// Drag and drop
+uploadZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', function() {
+    uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFileSelect(files[0]);
+    }
+});
+
+// File input change
+fileInput.addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+    }
+});
+
+function handleFileSelect(file) {
+    if (!file.name.endsWith('.txt')) {
+        alert('Please select a .txt file');
+        return;
+    }
+    
+    if (file.size > 16 * 1024 * 1024) {
+        alert('File too large. Maximum size is 16MB.');
+        return;
+    }
+    
+    uploadFile(file);
+}
+
+function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // Show loading
+    const fileName = document.getElementById('fileName');
+    fileName.textContent = '📤 Uploading...';
+    document.getElementById('fileInfo').style.display = 'block';
+    
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            uploadedFile = data;
+            showFileInfo(data);
+            document.getElementById('startTrainingBtn').disabled = false;
+        } else {
+            alert('Upload failed: ' + data.message);
+            clearFile();
+        }
+    })
+    .catch(error => {
+        alert('Upload error: ' + error);
+        clearFile();
+    });
+}
+
+function showFileInfo(data) {
+    document.getElementById('fileName').textContent = `📄 ${data.filename}`;
+    document.getElementById('fileDetails').textContent = 
+        `Size: ${(data.size / 1024).toFixed(1)} KB | Format: ${data.metadata.format}`;
+    document.getElementById('fileInfo').style.display = 'block';
+}
+
+function clearFile() {
+    uploadedFile = null;
+    document.getElementById('fileInfo').style.display = 'none';
+    document.getElementById('startTrainingBtn').disabled = true;
+    fileInput.value = '';
+}
+
+// Training form handling
+document.getElementById('trainingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!uploadedFile) {
+        alert('Please upload a file first');
+        return;
+    }
+    
+    const config = {
+        file_path: uploadedFile.file_path,
+        data_type: 'auto',
+        model_name: document.getElementById('modelName').value,
+        model_size: document.getElementById('modelSize').value,
+        max_iters: parseInt(document.getElementById('maxIters').value),
+        learning_rate: parseFloat(document.getElementById('learningRate').value),
+        block_size: parseInt(document.getElementById('blockSize').value),
+        batch_size: parseInt(document.getElementById('batchSize').value),
+        dropout: parseFloat(document.getElementById('dropout').value),
+        progress_interval: parseInt(document.getElementById('progressInterval').value),
+        resume: document.getElementById('resumeLatest').checked
+    };
+    
+    startTraining(config);
+});
+
+function startTraining(config) {
+    fetch('/start_training', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showTrainingProgress();
+        } else {
+            alert('Training failed to start: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error starting training: ' + error);
+    });
+}
+
+function showTrainingProgress() {
+    document.getElementById('trainingProgress').classList.add('active');
+    document.getElementById('startTrainingBtn').disabled = true;
+    document.getElementById('pauseBtn').disabled = false;
+    document.getElementById('resumeBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = false;
+    
+    // Initialize progress display
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressText').textContent = '0%';
+    document.getElementById('currentIteration').textContent = '0';
+    document.getElementById('currentLoss').textContent = '—';
+    document.getElementById('bestLoss').textContent = '—';
+    document.getElementById('learningRateDisplay').textContent = '—';
+    document.getElementById('elapsedTime').textContent = '00:00:00';
+    document.getElementById('etaTime').textContent = '—';
+    
+    // Clear and add initialization message to logs
+    const logs = document.getElementById('trainingLogs');
+    logs.innerHTML = '';
+    const initEntry = document.createElement('div');
+    initEntry.innerHTML = `<span style=\"color: #10b981;\">[${new Date().toLocaleTimeString()}]</span> <strong style=\"color: #3b82f6;\">🚀 Initializing training system...</strong>`;
+    logs.appendChild(initEntry);
+    
+    const dataEntry = document.createElement('div');
+    dataEntry.innerHTML = `<span style=\"color: #10b981;\">[${new Date().toLocaleTimeString()}]</span> 📂 Loading and processing training data...`;
+    logs.appendChild(dataEntry);
+    
+    const modelEntry = document.createElement('div');
+    modelEntry.innerHTML = `<span style=\"color: #10b981;\">[${new Date().toLocaleTimeString()}]</span> 🧠 Building neural network model...`;
+    logs.appendChild(modelEntry);
+    
+    // Scroll to progress section
+    document.getElementById('trainingProgress').scrollIntoView({ 
+        behavior: 'smooth' 
+    });
+}
+
+// Polling fallback in case Socket.IO events are delayed
+let statusPoller = null;
+function startStatusPolling(shouldPollFn, intervalMs = 10000) {
+    if (statusPoller) return;
+    statusPoller = setInterval(() => {
+        try {
+            if (typeof shouldPollFn === 'function' && !shouldPollFn()) {
+                return; // skip polling while socket appears active
+            }
+        } catch (_) {}
+        fetch('/training_status')
+            .then(r => r.json())
+            .then(s => {
+                updateTrainingProgress({
+                    progress: s.progress,
+                    iteration: s.iteration,
+                    max_iterations: s.max_iterations,
+                    current_loss: s.current_loss,
+                    best_loss: s.best_loss,
+                    lr: s.learning_rate,
+                    elapsed_sec: s.elapsed_sec,
+                    eta_sec: s.eta_sec
+                });
+            })
+            .catch(() => {});
+    }, intervalMs);
+}
+// default start if no socket yet
+startStatusPolling(() => true, 10000);
+
+// Control buttons
+const pauseBtn = document.getElementById('pauseBtn');
+pauseBtn.addEventListener('click', () => {
+    fetch('/pause_training', {method: 'POST'});
+});
+const resumeBtn = document.getElementById('resumeBtn');
+resumeBtn.addEventListener('click', () => {
+    fetch('/resume_training', {method: 'POST'});
+});
+const stopBtn = document.getElementById('stopBtn');
+stopBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to stop training?')) {
+        fetch('/stop_training', {method: 'POST'});
+    }
+});
+
+function fmtNum(n, digits=4, fallback='—') {
+    return Number.isFinite(n) ? n.toFixed(digits) : fallback;
+}
+function fmtExp(n, digits=2, fallback='—') {
+    return Number.isFinite(n) ? n.toExponential(digits) : fallback;
+}
+function fmtTime(sec) {
+    if (!Number.isFinite(sec)) return '—';
+    sec = Math.max(0, Math.floor(sec));
+    const h = String(Math.floor(sec/3600)).padStart(2,'0');
+    const m = String(Math.floor((sec%3600)/60)).padStart(2,'0');
+    const s = String(sec%60).padStart(2,'0');
+    return `${h}:${m}:${s}`;
+}
+
+let __lastLoggedIter = -1;
+function updateTrainingProgress(data) {
+    // Update progress bar and stats
+    document.getElementById('progressBar').style.width = (data.progress || 0) + '%';
+    document.getElementById('progressText').textContent = (data.progress || 0) + '%';
+    document.getElementById('currentIteration').textContent = data.iteration ?? 0;
+    document.getElementById('currentLoss').textContent = fmtNum(data.current_loss);
+    document.getElementById('bestLoss').textContent = fmtNum(data.best_loss);
+    document.getElementById('learningRateDisplay').textContent = fmtExp(data.lr);
+    document.getElementById('elapsedTime').textContent = fmtTime(data.elapsed_sec);
+    document.getElementById('etaTime').textContent = fmtTime(data.eta_sec);
+    
+    // Add user-friendly log entry only when iteration changes and every 10 steps (always on eval)
+    const logs = document.getElementById('trainingLogs');
+    const isEval = Number.isFinite(data.val_loss);
+    if (data.iteration === __lastLoggedIter) {
+        return; // avoid duplicates
+    }
+    if (!isEval && Number.isFinite(data.iteration) && data.iteration % 10 !== 0) {
+        return; // throttle to every 10 iterations
+    }
+    __lastLoggedIter = data.iteration;
+    const logEntry = document.createElement('div');
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const improving = Number.isFinite(data.best_loss) && Number.isFinite(data.current_loss) && data.current_loss <= data.best_loss;
+    const lossImprovement = improving ? "📈 Improving!" : "📊 Learning...";
+    const valLossText = isEval ? `, Validation: ${fmtNum(data.val_loss)}` : "";
+    
+    logEntry.innerHTML = `<span style=\"color: #10b981;\">[${timestamp}]</span> Step <strong>${data.iteration}</strong>/${data.max_iterations || '?'} - Loss: <strong style=\"color: #f59e0b;\">${fmtNum(data.current_loss)}</strong>${valLossText} ${lossImprovement}`;
+    
+    logs.appendChild(logEntry);
+    logs.scrollTop = logs.scrollHeight;
+    
+    // Remove old log entries if too many (keep last 200)
+    while (logs.children.length > 200) {
+        logs.removeChild(logs.firstChild);
+    }
+}
+
+// Handle checkpoint events
+if (socket) {
+    socket.on('checkpoint_saved', function(data) {
+        const logs = document.getElementById('trainingLogs');
+        const entry = document.createElement('div');
+        const ts = new Date().toLocaleTimeString();
+        const label = data.type === 'best' ? '💾 Best checkpoint' : '📝 Latest checkpoint';
+        const val = Number.isFinite(data.val_loss) ? data.val_loss.toFixed(4) : '—';
+        entry.innerHTML = `<span style=\"color: #10b981;\">[${ts}]</span> ${label} saved at step <strong>${data.iteration}</strong> (val_loss=${val}) → <code>${data.path}</code>`;
+        logs.appendChild(entry);
+        logs.scrollTop = logs.scrollHeight;
+    });
+}
+
+function onTrainingComplete(data) {
+    document.getElementById('trainingStatus').textContent = 'Completed';
+    document.getElementById('trainingStatus').className = 'badge bg-success';
+    
+    const logs = document.getElementById('trainingLogs');
+    const logEntry = document.createElement('div');
+    const finalLossText = (data.final_loss !== null && data.final_loss !== undefined) ? data.final_loss.toFixed(4) : '—';
+    logEntry.innerHTML = `<strong style=\"color: #00ff00;\">🎉 Training completed! Model \"${data.model_name}\" saved with final loss: ${finalLossText}</strong>`;
+    logs.appendChild(logEntry);
+    if (data.final_model_path) {
+        const p = document.createElement('div');
+        p.innerHTML = `📁 Final model: <code>${data.final_model_path}</code>`;
+        logs.appendChild(p);
+    }
+    if (data.best_model_path) {
+        const p = document.createElement('div');
+        p.innerHTML = `🏆 Best checkpoint: <code>${data.best_model_path}</code>`;
+        logs.appendChild(p);
+    }
+    if (data.latest_model_path) {
+        const p = document.createElement('div');
+        p.innerHTML = `📝 Latest checkpoint: <code>${data.latest_model_path}</code>`;
+        logs.appendChild(p);
+    }
+    if (data.sample_text) {
+        const sample = document.createElement('pre');
+        sample.style.whiteSpace = 'pre-wrap';
+        sample.style.marginTop = '10px';
+        sample.textContent = `--- Sample generation ---\n${data.sample_text}`;
+        logs.appendChild(sample);
+    }
+    logs.scrollTop = logs.scrollHeight;
+    
+    // Show success message and redirect option
+    setTimeout(() => {
+        if (confirm('Training completed successfully! Would you like to chat with your new model?')) {
+            window.location.href = '/chat';
+        }
+    }, 2000);
+}
+
+function onTrainingError(data) {
+    document.getElementById('trainingStatus').textContent = 'Error';
+    document.getElementById('trainingStatus').className = 'badge bg-danger';
+    
+    const logs = document.getElementById('trainingLogs');
+    const logEntry = document.createElement('div');
+    logEntry.innerHTML = `<strong style="color: #ff0000;">❌ Training failed: ${data.error}</strong>`;
+    logs.appendChild(logEntry);
+    logs.scrollTop = logs.scrollHeight;
+    
+    document.getElementById('startTrainingBtn').disabled = false;
+}
+
+function addTrainingLogMessage(message) {
+    const logs = document.getElementById('trainingLogs');
+    const logEntry = document.createElement('div');
+    const timestamp = new Date().toLocaleTimeString();
+    logEntry.innerHTML = `<span style="color: #10b981;">[${timestamp}]</span> ${message}`;
+    logs.appendChild(logEntry);
+    logs.scrollTop = logs.scrollHeight;
+    
+    // Remove old log entries if too many (keep last 50)
+    while (logs.children.length > 50) {
+        logs.removeChild(logs.firstChild);
+    }
+}
+</script>
+{% endblock %}
