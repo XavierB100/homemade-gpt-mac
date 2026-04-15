@@ -1,17 +1,17 @@
 #!/bin/bash
 # ============================================================
-# HomeMade GPT — macOS App Bundle Creator
+# VV-GPT — macOS App Bundle Creator
 # Run this once to create a clickable .app on your Desktop/Dock
 # ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_NAME="HomeMade GPT"
+APP_NAME="VV-GPT"
 APP_PATH="$HOME/Desktop/${APP_NAME}.app"
 ICON_SRC="$SCRIPT_DIR/homemade_gpt_icon.png"
 
 echo ""
 echo "=================================================="
-echo "  🤖  HomeMade GPT — Mac App Builder"
+echo "  🤖  VV-GPT — Mac App Builder"
 echo "=================================================="
 echo ""
 
@@ -29,11 +29,11 @@ cat > "${APP_PATH}/Contents/Info.plist" << EOF
     <key>CFBundleExecutable</key>
     <string>launch</string>
     <key>CFBundleIdentifier</key>
-    <string>com.xavierblake.homemade-gpt</string>
+    <string>com.xavierblake.vv-gpt</string>
     <key>CFBundleName</key>
-    <string>HomeMade GPT</string>
+    <string>VV-GPT</string>
     <key>CFBundleDisplayName</key>
-    <string>HomeMade GPT</string>
+    <string>VV-GPT</string>
     <key>CFBundleVersion</key>
     <string>2.0</string>
     <key>CFBundleShortVersionString</key>
@@ -52,7 +52,7 @@ EOF
 cat > "${APP_PATH}/Contents/MacOS/launch" << LAUNCHER
 #!/bin/bash
 cd "${SCRIPT_DIR}"
-open -a Terminal "${SCRIPT_DIR}/HomeMade_GPT.command"
+open -a Terminal "${SCRIPT_DIR}/VV_GPT.command"
 LAUNCHER
 
 chmod +x "${APP_PATH}/Contents/MacOS/launch"
@@ -78,10 +78,10 @@ fi
 touch "${APP_PATH}"
 
 echo ""
-echo "✅  HomeMade GPT.app created on your Desktop!"
+echo "✅  VV-GPT.app created on your Desktop!"
 echo ""
 echo "👉  To add it to your Dock:"
-echo "    1. Find 'HomeMade GPT' on your Desktop"
+echo "    1. Find 'VV-GPT' on your Desktop"
 echo "    2. Drag it to your Dock"
 echo "    3. That's it — click it any time to launch!"
 echo ""

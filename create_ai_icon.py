@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create a professional AI-themed icon for HomeMade GPT
+Create a professional AI-themed icon for VV-GPT
 Features neural network design with modern gradient styling
 """
 
@@ -26,7 +26,7 @@ def create_gradient_circle(draw, center, radius, inner_color, outer_color, alpha
         draw.ellipse([x-r, y-r, x+r, y+r], fill=color)
 
 def create_homemade_gpt_icon():
-    """Create the main HomeMade GPT icon"""
+    """Create the main VV-GPT icon"""
     size = 256
     icon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(icon)
@@ -169,7 +169,7 @@ def save_icon_formats(icon):
     print("✅ Created homemade_gpt_small.png")
 
 def main():
-    print("🎨 Creating HomeMade GPT AI-themed icon...")
+    print("🎨 Creating VV-GPT AI-themed icon...")
     print("-" * 40)
     
     try:

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# HomeMade GPT — macOS Launcher
+# VV-GPT — macOS Launcher
 # Double-click this file in Finder to start the app.
 # ============================================================
 
@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 
 echo ""
 echo "=================================================="
-echo "  🤖  HomeMade GPT — macOS Launcher"
+echo "  🤖  VV-GPT — macOS Launcher"
 echo "=================================================="
 echo ""
 
@@ -43,12 +43,12 @@ if ! $PYTHON -c "import flask" &>/dev/null; then
 fi
 
 # --- Launch the app ---
-echo "🚀  Starting HomeMade GPT..."
+echo "🚀  Starting VV-GPT..."
 echo "--------------------------------------------------"
 $PYTHON desktop_launcher.py
 
 echo ""
 echo "=================================================="
-echo "  HomeMade GPT has stopped."
+echo "  VV-GPT has stopped."
 echo "=================================================="
 read -p "Press Enter to close this window..."

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Interactive Chat Interface for Enhanced HomeMade GPT
+Interactive Chat Interface for Enhanced VV-GPT
 Chat with your trained models!
 """
 
@@ -13,7 +13,7 @@ from ..models.enhanced_gpt import GPT, GPTConfig
 from ..training.data_loader import DataProcessor
 
 class ChatBot:
-    """Interactive chatbot using trained HomeMade GPT"""
+    """Interactive chatbot using trained VV-GPT"""
     
     def __init__(self, model_path, device='auto'):
         """Initialize the chatbot with a trained model"""
@@ -134,7 +134,7 @@ class ChatBot:
     def chat_loop(self):
         """Main interactive chat loop"""
         print("\\n" + "="*60)
-        print("🤖 Enhanced HomeMade GPT Chat Interface")
+        print("🤖 Enhanced VV-GPT Chat Interface")
         print("="*60)
         print("Commands:")
         print("  /help     - Show this help message")
@@ -245,7 +245,7 @@ class ChatBot:
                 break
 
 def main():
-    parser = argparse.ArgumentParser(description='Chat with Enhanced HomeMade GPT')
+    parser = argparse.ArgumentParser(description='Chat with Enhanced VV-GPT')
     parser.add_argument('--model', type=str, required=True, 
                         help='Path to trained model checkpoint (.pt file)')
     parser.add_argument('--device', type=str, default='auto',

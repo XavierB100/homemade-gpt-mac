@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HomeMade GPT Desktop Launcher
+VV-GPT Desktop Launcher
 Enhanced launcher with proper signal handling and comprehensive logging
 """
 
@@ -53,7 +53,7 @@ class HomeMadeGPTLauncher:
     def shutdown(self):
         """Graceful shutdown"""
         if self.server_running:
-            self.log("Shutting down HomeMade GPT server...", "WARNING")
+            self.log("Shutting down VV-GPT server...", "WARNING")
             self.server_running = False
             time.sleep(1)
             self.log("Server stopped successfully", "SUCCESS")
@@ -63,7 +63,7 @@ class HomeMadeGPTLauncher:
     def start(self):
         """Main launcher function"""
         print("\n" + "="*50)
-        self.log("🚀 HomeMade GPT Desktop Application", "SUCCESS")
+        self.log("🚀 VV-GPT Desktop Application", "SUCCESS")
         print("="*50)
         
         # Change to the directory where this script is located
@@ -113,7 +113,7 @@ class HomeMadeGPTLauncher:
             print("\nPress Enter to exit...")
             input()
         finally:
-            self.log("HomeMade GPT application closed", "INFO")
+            self.log("VV-GPT application closed", "INFO")
             print("="*50)
 
 def main():

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced HomeMade GPT Training Script
+Enhanced VV-GPT Training Script
 Train your own GPT on custom data (books, WhatsApp chats, etc.)
 """
 
@@ -82,7 +82,7 @@ def create_sample_whatsapp_data():
     print("Created sample_whatsapp.txt for testing")
 
 def main():
-    parser = argparse.ArgumentParser(description='Train Enhanced HomeMade GPT')
+    parser = argparse.ArgumentParser(description='Train Enhanced VV-GPT')
     parser.add_argument('--data', type=str, help='Path to training data file')
     parser.add_argument('--data_type', type=str, choices=['auto', 'plain_text', 'whatsapp'], 
                         default='auto', help='Type of input data')

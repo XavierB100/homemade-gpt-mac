@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced HomeMade GPT Web Interface
+Enhanced VV-GPT Web Interface
 A Flask web application for training and chatting with custom GPT models
 """
 
@@ -16,7 +16,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, f
 from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
 
-# Import our HomeMade GPT modules
+# Import our VV-GPT modules
 from src.training.data_loader import DataProcessor
 from src.models.enhanced_gpt import GPT, GPTConfig
 from src.chat.chat import ChatBot
@@ -48,7 +48,7 @@ def log_activity(message, level="INFO", user_action=False):
             f.write(f"[{datetime.now().isoformat()}] {level}: {message}\n")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'homemade-gpt-secret-key'
+app.config['SECRET_KEY'] = 'vv-gpt-secret-key'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
@@ -110,7 +110,7 @@ def get_available_models():
         sys.modules['data_loader'] = data_loader_module
     
     for model_file in models_dir.glob('*.pt'):
-        if model_file.name in ['ckpt.pt', 'final_model.pt']:
+        if model_file.name in ['ckpt.pt', 'final_model.pt'] or model_file.stem.endswith('_latest') or model_file.stem.endswith('_best'):
             continue
             
         try:
@@ -708,7 +708,7 @@ def delete_model(model_name):
 @socketio.on('connect')
 def handle_connect():
     """Handle client connection"""
-    emit('connected', {'data': 'Connected to HomeMade GPT server'})
+    emit('connected', {'data': 'Connected to VV-GPT server'})
 
 @socketio.on('request_training_status')
 def handle_status_request():
@@ -716,7 +716,7 @@ def handle_status_request():
     emit('training_status', training_status)
 
 if __name__ == '__main__':
-    print("🚀 Starting Enhanced HomeMade GPT Web Interface...")
+    print("🚀 Starting Enhanced VV-GPT Web Interface...")
     print("🌐 Server running on: http://127.0.0.1:5000")
     print("🤖 Upload text files to train custom AI models")
     print("💬 Chat with your trained models")

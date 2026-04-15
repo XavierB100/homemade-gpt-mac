@@ -1,5 +1,5 @@
 """
-Enhanced Data Loader for HomeMade GPT
+Enhanced Data Loader for VV-GPT
 Supports plain text (books, novels) and WhatsApp conversation formats
 """
 

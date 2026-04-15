@@ -1,5 +1,5 @@
 """
-Enhanced GPT Model for HomeMade GPT
+Enhanced GPT Model for VV-GPT
 Includes modern improvements and configurable architecture
 """
 

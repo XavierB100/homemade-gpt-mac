@@ -1,5 +1,5 @@
-# HomeMade GPT Source Package
+# VV-GPT Source Package
 """
-Core source code for the HomeMade GPT web application.
+Core source code for the VV-GPT web application.
 Contains models, training logic, and chat functionality.
 """

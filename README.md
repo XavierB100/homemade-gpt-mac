@@ -1,6 +1,6 @@
-# 🤖 HomeMade GPT — macOS Edition
+# 🤖 VV-GPT — macOS Edition
 
-A custom GPT you can train on your own text data (books, WhatsApp chats, notes — anything!) and chat with locally. This is the macOS-native port of the original [homemade-gpt](https://github.com/XavierB100/homemade-gpt), rebuilt for Apple Silicon.
+A custom GPT you can train on your own text data (books, WhatsApp chats, notes — anything!) and chat with locally. This is the macOS-native port of the original [vv-gpt](https://github.com/XavierB100/vv-gpt), rebuilt for Apple Silicon.
 
 > **Runs entirely on your Mac — no internet, no API keys, no cost.**
 
@@ -37,7 +37,7 @@ pip3 install -r requirements.txt
 ### 2. Launch the app
 
 **Option A — Double-click (easiest):**
-- Double-click `HomeMade_GPT.command` in Finder
+- Double-click `VV_GPT.command` in Finder
 - If macOS blocks it: right-click → Open → Open
 
 **Option B — Terminal:**
@@ -91,10 +91,10 @@ On Apple Silicon your M1/M2/M3 Mac will automatically use the **Metal GPU** — 
 ## 🗂️ Project Structure
 
 ```
-homemade-gpt-mac/
+vv-gpt-mac/
 ├── web_app.py              # Flask web application
 ├── desktop_launcher.py     # App launcher with signal handling
-├── HomeMade_GPT.command    # 🍎 macOS double-click launcher
+├── VV_GPT.command    # 🍎 macOS double-click launcher
 ├── create_mac_app.sh       # 🍎 Creates a .app bundle for Dock
 ├── requirements.txt        # Python dependencies
 ├── src/
@@ -114,7 +114,7 @@ homemade-gpt-mac/
 
 ## 🔗 Original Project
 
-Based on [homemade-gpt](https://github.com/XavierB100/homemade-gpt) — originally built on Windows.
+Based on [vv-gpt](https://github.com/XavierB100/vv-gpt) — originally built on Windows.
 
 ---
 
