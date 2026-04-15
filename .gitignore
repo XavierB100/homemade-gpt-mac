@@ -64,3 +64,4 @@ instance/
 # Temporary files
 *.tmp
 *.temp
+.venv/
